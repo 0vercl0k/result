@@ -7,7 +7,7 @@ Simple, tiny and readable implementation of a `Rust` [std::result](https://doc.r
 ```c++
 ```
 
-[C++ 20](https://en.wikipedia.org/wiki/C%2B%2B20) is upon us and the language still doesn't offer a bullet-proof, standardized way to have a function return errors / values. It feels the language has now every pieces required to implement such a type without too much pain and offering good enough guarantees.
+[C++ 20](https://en.wikipedia.org/wiki/C%2B%2B20) is upon us and the language still doesn't offer a bullet-proof, standardized way to have a function return errors / values (I don't like exceptions). It feels the language has now every pieces required to implement such a type without too much pain and offering good enough guarantees.
 
 The best mechanism I could find was `Rust`'s [std::result].
 
