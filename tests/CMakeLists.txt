@@ -28,3 +28,9 @@ add_executable(
 
 add_compile_definitions(FMT_HEADER_ONLY)
 add_dependencies(tests fmt)
+
+add_compile_options(
+    $<$<CXX_COMPILER_ID:MSVC>:/W4$<SEMICOLON>/WX>
+    $<$<CXX_COMPILER_ID:GNU>:-Wall$<SEMICOLON>-Wextra$<SEMICOLON>-pedantic$<SEMICOLON>-Werror>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall$<SEMICOLON>-Wextra$<SEMICOLON>-pedantic$<SEMICOLON>-Werror>
+)
