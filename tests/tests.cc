@@ -30,25 +30,25 @@ struct Move_t {
 
 int main() {
   {
-    constexpr Result_t<bool, bool> R = Ok(true);
+    constexpr Result<bool, bool> R = Ok(true);
     static_assert(R.Ok(), "Expected to be ok");
     static_assert(R.Unwrap(), "Ok value expected to be true");
   }
   {
-    constexpr Result_t<bool, uint32_t> R = Ok(false);
+    constexpr Result<bool, uint32_t> R = Ok(false);
     static_assert(R.Ok(), "Expected to be ok");
     static_assert(!R.Unwrap(), "Ok value expected to be false");
   }
   {
-    constexpr Result_t<bool, uint32_t> R = Err(uint32_t(1336));
+    constexpr Result<bool, uint32_t> R = Err(uint32_t(1336));
     static_assert(!R.Ok());
   }
   {
-    constexpr Result_t<bool, uint32_t> R = Err(uint32_t(1336));
+    constexpr Result<bool, uint32_t> R = Err(uint32_t(1336));
     static_assert(!R.Ok());
   }
   {
-    auto Foo = [](const int A) -> Result_t<void, void> {
+    auto Foo = [](const int A) -> Result<void, void> {
       if (A == 1337) {
         return Ok();
       }
@@ -61,7 +61,7 @@ int main() {
     static_assert(B.Err(), "Expected to be an error");
   }
   {
-    auto Foo = [](const int A) -> Result_t<Move_t, int> {
+    auto Foo = [](const int A) -> Result<Move_t, int> {
       if (A == 1337) {
         Move_t x(0x1000);
         return Ok(x);

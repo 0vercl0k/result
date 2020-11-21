@@ -24,22 +24,21 @@ namespace result {
         Err_t& operator=(const Err_t&) = delete;
         Err_t& operator=(Err_t&&) = delete;
     };
-
     template<> struct Err_t<void> {};
 
     template<typename OkContent_t, typename ErrorContent_t>
-    struct [[nodiscard("Bleh")]] Result_t {
+    struct [[nodiscard("This return value should not be discarded; mistake?")]] Result {
         using OkType_t = Ok_t<OkContent_t>;
         using ErrorType_t = Err_t<ErrorContent_t>;
         std::variant<OkType_t, ErrorType_t> V_;
 
-        constexpr Result_t(OkType_t&& Ok) : V_(std::move(Ok)) {}
-        constexpr Result_t(ErrorType_t&& Error) : V_(std::move(Error)) {}
+        constexpr Result(OkType_t&& Ok) : V_(std::move(Ok)) {}
+        constexpr Result(ErrorType_t&& Error) : V_(std::move(Error)) {}
 
-        Result_t(const Result_t&) = delete;
-        Result_t& operator=(const Result_t&) = delete;
-        Result_t(Result_t&&) = delete;
-        Result_t& operator=(Result_t&&) = delete;
+        Result(const Result&) = delete;
+        Result& operator=(const Result&) = delete;
+        Result(Result&&) = delete;
+        Result& operator=(Result&&) = delete;
 
         constexpr bool Err() const noexcept {
             return std::holds_alternative<ErrorType_t>(V_);
