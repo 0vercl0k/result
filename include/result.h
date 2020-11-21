@@ -26,15 +26,15 @@ namespace result {
     };
     template<> struct Err_t<void> {};
 
-    template<typename OkContent_t, typename ErrorContent_t>
+    template<typename OkContent_t, typename ErrContent_t>
     class [[nodiscard("This return value should not be discarded; mistake?")]] Result {
         using OkType_t = Ok_t<OkContent_t>;
-        using ErrorType_t = Err_t<ErrorContent_t>;
-        std::variant<OkType_t, ErrorType_t> V_;
+        using ErrType_t = Err_t<ErrContent_t>;
+        std::variant<OkType_t, ErrType_t> V_;
 
     public:
         constexpr Result(OkType_t&& Ok) : V_(std::move(Ok)) {}
-        constexpr Result(ErrorType_t&& Error) : V_(std::move(Error)) {}
+        constexpr Result(ErrType_t&& Error) : V_(std::move(Error)) {}
 
         Result(const Result&) = delete;
         Result& operator=(const Result&) = delete;
@@ -42,7 +42,7 @@ namespace result {
         Result& operator=(Result&&) = delete;
 
         [[nodiscard("This return value should not be discarded; mistake?")]] constexpr bool Err() const noexcept {
-            return std::holds_alternative<ErrorType_t>(V_);
+            return V_.index() == 1;
         }
 
         [[nodiscard("This return value should not be discarded; mistake?")]] constexpr bool Ok() const noexcept {
@@ -50,11 +50,23 @@ namespace result {
         }
 
         [[nodiscard("This return value should not be discarded; mistake?")]] constexpr auto& Unwrap() noexcept {
+            assert(V_.index() == 0);
             return  std::get<OkType_t>(V_).Ok;
         }
 
         [[nodiscard("This return value should not be discarded; mistake?")]] constexpr auto& Unwrap() const noexcept {
+            assert(V_.index() == 0);
             return  std::get<OkType_t>(V_).Ok;
+        }
+
+        [[nodiscard("This return value should not be discarded; mistake?")]] constexpr auto& UnwrapErr() noexcept {
+            assert(V_.index() == 1);
+            return  std::get<ErrType_t>(V_).Ok;
+        }
+
+        [[nodiscard("This return value should not be discarded; mistake?")]] constexpr auto& UnwrapErr() const noexcept {
+            assert(V_.index() == 1);
+            return  std::get<ErrType_t>(V_).Ok;
         }
     };
 }

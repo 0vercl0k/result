@@ -1,6 +1,9 @@
 name: Builds
 
 on: [push, pull_request]
+strategy:
+  matrix:
+    config: [RelWithDebInfo, Debug]
 
 jobs:
   Windows:
@@ -16,12 +19,12 @@ jobs:
     - name: Build
       run: |
         cd tests\build
-        .\build-release.bat
+        .\build.bat ${{ matrix.config }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: win64-RelWithDebInfo
+        name: win64-${{ matrix.config }}
         path: |
           tests/build/tests.exe
           tests/build/tests.pdb
@@ -42,8 +45,8 @@ jobs:
     - name: Build
       run: |
         cd tests/build
-        chmod u+x ./build-release.sh
-        CC=gcc-10 CXX=g++-10 ./build-release.sh
+        chmod u+x ./build.sh
+        CC=gcc-10 CXX=g++-10 ./build.sh ${{ matrix.config }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
@@ -68,12 +71,12 @@ jobs:
     - name: Build
       run: |
         cd tests/build
-        chmod u+x ./build-release.sh
-        CC=clang-11 CXX=clang++-11 ./build-release.sh
+        chmod u+x ./build.sh
+        CC=clang-11 CXX=clang++-11 ./build.sh ${{ matrix.config }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: lin64-clang11-RelWithDebInfo
+        name: lin64-clang11-${{ matrix.config }}
         path: |
           tests/build/tests
