@@ -51,7 +51,7 @@ jobs:
       run: |
         sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
         sudo apt-get -y update
-        sudo apt install -y g++-10 ninja-build ${{ matrix.compiler.cxx }}
+        sudo apt install -y g++-10 ninja-build
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 
     - name: Build
