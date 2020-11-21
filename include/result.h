@@ -27,11 +27,12 @@ namespace result {
     template<> struct Err_t<void> {};
 
     template<typename OkContent_t, typename ErrorContent_t>
-    struct [[nodiscard("This return value should not be discarded; mistake?")]] Result {
+    class [[nodiscard("This return value should not be discarded; mistake?")]] Result {
         using OkType_t = Ok_t<OkContent_t>;
         using ErrorType_t = Err_t<ErrorContent_t>;
         std::variant<OkType_t, ErrorType_t> V_;
 
+    public:
         constexpr Result(OkType_t&& Ok) : V_(std::move(Ok)) {}
         constexpr Result(ErrorType_t&& Error) : V_(std::move(Error)) {}
 
@@ -40,16 +41,20 @@ namespace result {
         Result(Result&&) = delete;
         Result& operator=(Result&&) = delete;
 
-        constexpr bool Err() const noexcept {
+        [[nodiscard("This return value should not be discarded; mistake?")]] constexpr bool Err() const noexcept {
             return std::holds_alternative<ErrorType_t>(V_);
         }
 
-        constexpr bool Ok() const noexcept {
+        [[nodiscard("This return value should not be discarded; mistake?")]] constexpr bool Ok() const noexcept {
             return !Err();
         }
 
-        constexpr const auto& Unwrap() const noexcept {
-            return std::get<OkType_t>(V_).Ok;
+        [[nodiscard("This return value should not be discarded; mistake?")]] constexpr auto& Unwrap() noexcept {
+            return  std::get<OkType_t>(V_).Ok;
+        }
+
+        [[nodiscard("This return value should not be discarded; mistake?")]] constexpr auto& Unwrap() const noexcept {
+            return  std::get<OkType_t>(V_).Ok;
         }
     };
 }
