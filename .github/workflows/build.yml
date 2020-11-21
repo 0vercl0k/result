@@ -1,14 +1,16 @@
 name: Builds
 
 on: [push, pull_request]
-strategy:
-  matrix:
-    config: [RelWithDebInfo, Debug]
 
 jobs:
+
   Windows:
     name: Windows latest
     runs-on: windows-latest 
+    strategy:
+      matrix:
+        config: [RelWithDebInfo, Debug]
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -32,6 +34,13 @@ jobs:
   Linux2004Gcc:
     name: Ubuntu 20.04 / GCC10
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        cc: [gcc-10, clang-11]
+        cxx: [g++-10, clang++-11]
+        config: [RelWithDebInfo, Debug]
+
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -40,43 +49,18 @@ jobs:
       run: |
         sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
         sudo apt-get -y update
-        sudo apt install -y g++-10 ninja-build
+        sudo apt install -y g++-10 ninja-build ${{ matrix.cxx }}
+        sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 
     - name: Build
       run: |
         cd tests/build
         chmod u+x ./build.sh
-        CC=gcc-10 CXX=g++-10 ./build.sh ${{ matrix.config }}
+        CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} ./build.sh ${{ matrix.config }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: lin64-gcc10-RelWithDebInfo
-        path: |
-          tests/build/tests
-
-  Linux2004Clang:
-    name: Ubuntu 20.04 / Clang11
-    runs-on: ubuntu-20.04
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Install c++ headers
-      run: sudo apt install -y g++-10 ninja-build
-
-    - name: Grab latest llvm
-      run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-
-    - name: Build
-      run: |
-        cd tests/build
-        chmod u+x ./build.sh
-        CC=clang-11 CXX=clang++-11 ./build.sh ${{ matrix.config }}
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: lin64-clang11-${{ matrix.config }}
+        name: lin64-${{ matrix.cxx }}-${{ matrix.config }}
         path: |
           tests/build/tests
