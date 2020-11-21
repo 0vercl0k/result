@@ -3,7 +3,7 @@
 
 ## Overview
 
-Simple, tiny and readable implementation of a `Rust` [std::result](https://doc.rust-lang.org/std/result/) like type for C++ 20. The implementation uses [std::variant](https://en.cppreference.com/w/cpp/utility/variant) between two user-defined types.
+Simple, tiny and readable implementation of a `Rust` [std::result](https://doc.rust-lang.org/std/result/) like type for C++ 20. The implementation uses [std::variant](https://en.cppreference.com/w/cpp/utility/variant) between two user-defined types. Play with it on [godbolt.org](https://godbolt.org/z/vr9rza).
 
 ```c++
 template <typename OkContent_t, typename ErrContent_t>

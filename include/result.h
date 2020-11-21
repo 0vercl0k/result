@@ -1,5 +1,6 @@
 // Axel '0vercl0k' Souchet - November 20 2020
 #pragma once
+#include <cassert>
 #include <cstdint>
 #include <variant>
 
