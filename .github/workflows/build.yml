@@ -32,14 +32,16 @@ jobs:
           tests/build/tests.pdb
 
   Linux2004Gcc:
-    name: Ubuntu 20.04 / GCC10
+    name: Ubuntu 20.04
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        cc: [gcc-10, clang-11]
-        cxx: [g++-10, clang++-11]
+        compiler:
+          - cc: gcc-10
+            cxx: g++-10
+          - cc: clang-11
+            cxx: clang++-11
         config: [RelWithDebInfo, Debug]
-
 
     steps:
     - name: Checkout
@@ -49,18 +51,18 @@ jobs:
       run: |
         sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
         sudo apt-get -y update
-        sudo apt install -y g++-10 ninja-build ${{ matrix.cxx }}
+        sudo apt install -y g++-10 ninja-build ${{ matrix.compiler.cxx }}
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 
     - name: Build
       run: |
         cd tests/build
         chmod u+x ./build.sh
-        CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} ./build.sh ${{ matrix.config }}
+        CC=${{ matrix.compiler.cc }} CXX=${{ matrix.compiler.cxx }} ./build.sh ${{ matrix.config }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: lin64-${{ matrix.cxx }}-${{ matrix.config }}
+        name: lin64-${{ matrix.compiler.cxx }}-${{ matrix.config }}
         path: |
           tests/build/tests
