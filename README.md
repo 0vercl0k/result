@@ -1,4 +1,5 @@
 # result
+![Builds](https://github.com/0vercl0k/result/workflows/Builds/badge.svg)
 
 ## Overview
 

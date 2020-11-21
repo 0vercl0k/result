@@ -1,4 +1,5 @@
 // Axel '0vercl0k' Souchet - November 20 2020
+#include "fmt/format.h"
 #include "result.h"
 
 using namespace result;
@@ -7,18 +8,18 @@ struct Move_t {
   const size_t Size_ = 0;
   uint8_t *Data_ = nullptr;
   Move_t(const size_t X) : Size_(X), Data_(new uint8_t[Size_]) {
-    printf("(%p): ctor allocated %p\n", this, Data_);
+    fmt::print("{}: ctor allocated {}\n", fmt::ptr(this), fmt::ptr(Data_));
   }
 
   ~Move_t() {
-    printf("(%p): dtor releasing %p\n", this, Data_);
+    fmt::print("{}: dtor releasing {}\n", fmt::ptr(this), Data_);
     if (Data_ != nullptr) {
       delete[] Data_;
     }
   }
 
   Move_t(Move_t &&C) noexcept {
-    printf("(%p): move ctor\n", this);
+    fmt::print("{}: move ctor\n", fmt::ptr(this));
     Data_ = std::exchange(C.Data_, nullptr);
   }
 
@@ -31,12 +32,12 @@ int main() {
   {
     constexpr Result_t<bool, bool> R = Ok(true);
     static_assert(R.Ok(), "Expected to be ok");
-    static_assert(R.Unwrap(), "Expected to be true");
+    static_assert(R.Unwrap(), "Ok value expected to be true");
   }
   {
     constexpr Result_t<bool, uint32_t> R = Ok(false);
     static_assert(R.Ok(), "Expected to be ok");
-    static_assert(!R.Unwrap(), "Expected to be false");
+    static_assert(!R.Unwrap(), "Ok value expected to be false");
   }
   {
     constexpr Result_t<bool, uint32_t> R = Err(uint32_t(1336));
@@ -54,10 +55,10 @@ int main() {
       return Err();
     };
     constexpr auto A = Foo(1337);
-    static_assert(A.Ok());
+    static_assert(A.Ok(), "Expected to be ok");
 
     constexpr auto B = Foo(1338);
-    static_assert(B.Err());
+    static_assert(B.Err(), "Expected to be an error");
   }
   {
     auto Foo = [](const int A) -> Result_t<Move_t, int> {
@@ -78,7 +79,9 @@ int main() {
 
     if (A.Ok()) {
       const auto &S = A.Unwrap();
-      printf("%p\n", S.Data_);
+      fmt::print("{}\n", fmt::ptr(S.Data_));
     }
   }
+
+  return 0;
 }
