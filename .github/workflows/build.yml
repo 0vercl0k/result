@@ -1,0 +1,79 @@
+name: Builds
+
+on: [push, pull_request]
+
+jobs:
+  Windows:
+    name: Windows latest
+    runs-on: windows-latest 
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup vs prompt
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Build
+      run: |
+        cd tests\build
+        .\build-release.bat
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: win64-RelWithDebInfo
+        path: |
+          tests/build/tests.exe
+          tests/build/tests.pdb
+
+  Linux2004Gcc:
+    name: Ubuntu 20.04 / GCC10
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Grab latest gcc
+      run: |
+        sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        sudo apt-get -y update
+        sudo apt install -y g++-10 ninja-build
+
+    - name: Build
+      run: |
+        cd tests/build
+        chmod u+x ./build-release.sh
+        CC=gcc-10 CXX=g++-10 ./build-release.sh
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: lin64-gcc10-RelWithDebInfo
+        path: |
+          tests/build/tests
+
+  Linux2004Clang:
+    name: Ubuntu 20.04 / Clang11
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install c++ headers
+      run: sudo apt install -y g++-10 ninja-build
+
+    - name: Grab latest llvm
+      run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+
+    - name: Build
+      run: |
+        cd tests/build
+        chmod u+x ./build-release.sh
+        CC=clang-11 CXX=clang++-11 ./build-release.sh
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: lin64-clang11-RelWithDebInfo
+        path: |
+          tests/build/tests
