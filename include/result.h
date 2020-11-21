@@ -2,17 +2,11 @@
 #pragma once
 #include <cstdint>
 #include <variant>
-#include <Windows.h>
-#include <optional>
 
 namespace result {
     template<typename OkContent_t> struct Ok_t {
         OkContent_t Ok;
         constexpr Ok_t(OkContent_t&& Content) : Ok(std::move(Content)) {}
-        /// <summary>
-        /// Result_t needs to be able to move an Ok_t into the variant.
-        /// </summary>
-        /// <param name=""></param>
         constexpr Ok_t(Ok_t&&) = default;
 
         Ok_t(const Ok_t&) = delete;
@@ -47,15 +41,15 @@ namespace result {
         Result_t(Result_t&&) = delete;
         Result_t& operator=(Result_t&&) = delete;
 
-        constexpr bool Err() const {
+        constexpr bool Err() const noexcept {
             return std::holds_alternative<ErrorType_t>(V_);
         }
 
-        constexpr bool Ok() const {
+        constexpr bool Ok() const noexcept {
             return !Err();
         }
 
-        constexpr const auto& Unwrap() const {
+        constexpr const auto& Unwrap() const noexcept {
             return std::get<OkType_t>(V_).Ok;
         }
     };
@@ -75,6 +69,6 @@ template<typename OkContent_t>
     return result::Ok_t(std::move(OkContent));
 }
 
-constexpr auto Ok() {
+[[nodiscard("This return value should not be discarded; mistake ?")]] constexpr auto Ok() {
     return result::Ok_t<void>();
 }
