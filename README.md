@@ -48,3 +48,7 @@ result::Result<Buffer_t, void> ReadFile(const fs::path &Path, size_t &FileSize) 
   return Ok(Buffer);
 }
 ```
+
+# Authors
+
+* Axel Souchet ([@0vercl0k](https://twitter.com/0vercl0k))
