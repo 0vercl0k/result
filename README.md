@@ -3,9 +3,15 @@
 
 ## Overview
 
-Simple, tiny and readable implementation of a `Rust` [std::result](https://doc.rust-lang.org/std/result/) like type for C++.
+Simple, tiny and readable implementation of a `Rust` [std::result](https://doc.rust-lang.org/std/result/) like type for C++ 20. The implementation uses [std::variant](https://en.cppreference.com/w/cpp/utility/variant) between two user-defined types.
 
 ```c++
+template <typename OkContent_t, typename ErrContent_t>
+class Result {
+  using OkType_t = Ok_t<OkContent_t>;
+  using ErrType_t = Err_t<ErrContent_t>;
+  std::variant<OkType_t, ErrType_t> V_;
+};
 ```
 
 [C++ 20](https://en.wikipedia.org/wiki/C%2B%2B20) is upon us and the language still doesn't offer a bullet-proof, standardized way to have a function return errors / values (I don't like exceptions). It feels the language has now every pieces required to implement such a type without too much pain and offering good enough guarantees.
