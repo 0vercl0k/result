@@ -68,13 +68,13 @@ public:
   [[nodiscard("This should not be discarded")]] constexpr auto &
   UnwrapErr() noexcept {
     assert(V_.index() == 1);
-    return std::get<ErrType_t>(V_).Ok;
+    return std::get<ErrType_t>(V_).Err;
   }
 
   [[nodiscard("This should not be discarded")]] constexpr auto &UnwrapErr()
       const noexcept {
     assert(V_.index() == 1);
-    return std::get<ErrType_t>(V_).Ok;
+    return std::get<ErrType_t>(V_).Err;
   }
 };
 } // namespace result
