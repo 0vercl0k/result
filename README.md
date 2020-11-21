@@ -51,4 +51,4 @@ result::Result<Buffer_t, void> ReadFile(const fs::path &Path, size_t &FileSize) 
 
 # Authors
 
-* Axel Souchet ([@0vercl0k](https://twitter.com/0vercl0k))
+* Axel '[@0vercl0k](https://twitter.com/0vercl0k)' Souchet
