@@ -47,7 +47,7 @@ result::Result<Buffer_t, void> ReadFile(const fs::path &Path,
   try {
     auto Buffer = std::make_unique<uint8_t[]>(FileSize);
     File.read((char *)Buffer.get(), FileSize);
-    return Ok(Buffer);
+    return Ok(std::move(Buffer));
   } catch (...) {
     return Err();
   }
@@ -98,11 +98,10 @@ int main() {
   {
     auto Foo = [](const int A) -> Result<Move_t, int> {
       if (A == 1337) {
-        Move_t x(0x1000);
-        return Ok(x);
+        return Ok(Move_t(0x1000));
       } else if (A == 1338) {
         Move_t y(0x1000);
-        return Ok(y);
+        return Ok(std::move(y));
       }
       return Err(1337);
     };
@@ -117,6 +116,22 @@ int main() {
       fmt::print("{}\n", fmt::ptr(S.Data_));
     }
   }
+  {
+    auto Foo = [](const int A) -> Result<void, std::string_view> {
+      if (A == 1337) {
+        return Ok();
+      } else if (A == 1338) {
+        return Ok();
+      }
+      return Err(std::string_view("Error message!"));
+    };
 
+    constexpr const auto &A = Foo(1336);
+    if (A.Ok()) {
+      std::abort();
+    }
+
+    fmt::print("{}\n", A.UnwrapErr());
+  }
   return 0;
 }
